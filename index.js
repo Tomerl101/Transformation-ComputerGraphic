@@ -1,59 +1,45 @@
-const SHAPES = { LINE: "A", CIRCLE: "B", CURVE: "C" };
+const canvas = document.getElementById('myCanvas');
+
+//canvas.onclick = (e) => console.log(e);
 
 //read file from user selected file
-document
-  .getElementById("fileInput")
-  .addEventListener("change", function selectedFileChanged() {
-    if (this.files.length === 0) {
-      console.log("No file selected.");
-      return;
-    }
+document.getElementById('fileInput').addEventListener('change', function selectedFileChanged() {
+  if (this.files.length === 0) {
+    console.log('No file selected.');
+    return;
+  }
 
-    const reader = new FileReader();
-    reader.onload = function fileReadCompleted() {
-      // when the reader is done, the content is in reader.result.
-      let result = reader.result;
-      var textLines = result.split("\n");
+  const reader = new FileReader();
+  reader.readAsText(this.files[0]);
 
-      textLines.forEach((line) => {
-        const { shape, values } = parseLine(line);
+  // when the reader is done, the content is in reader.result.
+  reader.onload = function fileReadCompleted() {
+    let result = reader.result;
+    loadGraphicsFile(result);
+  };
+});
 
-        switch (shape) {
-          case SHAPES.LINE:
-            drawLine(values);
-            break;
-          case SHAPES.CIRCLE:
-            drawCircle(values);
-            break;
-          case SHAPES.CURVE:
-            drawCurve(values);
-            break;
-          default:
-            //TODO: throw error - shape not supported!
-            break;
-        }
-      });
-    };
-    reader.readAsText(this.files[0]);
-  });
-
-function drawLine(points) {
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(300, 150);
-  ctx.stroke();
-  console.log("draw line ", points);
+/**
+ * initalize the graphics from user text file into the Editor class
+ * * @param {string} textData - the content of the user selected graphic file to draw
+ */
+function loadGraphicsFile(textData) {
+  const textLines = textData.split('\n');
+  const graphics = textLines.map((line) => parseLine(line));
+  const editor = new Editor(canvas, graphics);
 }
 
-function drawCircle(points) {}
-
-function drawCurve(points) {}
-
+/**
+ * parse string line to get the values and the type of the shape
+ * @param {string} line - a line from the user text file
+ * @return {values<number[]>, shape<string>} graphic - represent graphic object to draw
+ */
 function parseLine(line) {
-  //TODO: validate user input!
-  line = line.replace("(", "");
-  line = line.replace(")", "");
-  const values = line.split(",");
+  console.log('parsing line');
+  //TODO: validate user input!!!
+  line = line.replace('(', '');
+  line = line.replace(')', '');
+  const values = line.split(',');
   const shape = values.pop();
   return { values, shape };
 }
