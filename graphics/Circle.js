@@ -1,7 +1,7 @@
 class Circle {
   constructor(centerX, centerY, radius, fill = '') {
     console.log('create new circle...');
-    this.center = { x: centerX, y: centerY };
+    this.center = { x: Number(centerX), y: Number(centerY) };
     this.radius = radius;
     this.fill = fill;
   }

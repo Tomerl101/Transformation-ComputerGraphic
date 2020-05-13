@@ -3,6 +3,7 @@ const SHAPE_TYPE = { LINE: 'A', CIRCLE: 'B', CURVE: 'C' };
 /**
  * The Editor class manage hold the graphics given by the user from .txt file
  * The Editor is also responsible for the image manipulations
+ * math matrices docs : https://mathjs.org/docs/datatypes/matrices.html
  */
 class Editor {
   constructor(canvas, graphics) {
