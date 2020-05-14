@@ -1,6 +1,6 @@
 const canvas = document.getElementById('myCanvas');
-
-//canvas.onclick = (e) => console.log(e);
+const ctx = canvas.getContext('2d');
+ctx.transform(1, 0, 0, -1, 0, canvas.height);
 
 //read file from user selected file
 document.getElementById('fileInput').addEventListener('change', function selectedFileChanged() {
