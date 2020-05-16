@@ -6,14 +6,25 @@
     <title>Draw Points</title>
   </head>
   <body>
+    <label for="scaleX">scaleX by:</label>
+    <input id="scaleX" type="number" min="1" />
+    <label for="scaleY">scaleY by:</label>
+    <input id="scaleY" type="number" min="1" />
+    <button id="doScale">scale</button>
+    <br />
     <button id="mirrorX">mirrorX</button>
     <button id="mirrorY">mirrorY</button>
-
+    <br />
     <label for="translateX">translateX by:</label>
-    <input id="translateX" />
+    <input id="translateX" type="number" />
     <label for="translateY">translateY by:</label>
-    <input id="translateY" />
+    <input id="translateY" type="number" />
     <button id="doTranslate">translate</button>
+    <br />
+    <label for="rotationDegree">rotation degree:</label>
+    <input id="rotationDegree" type="number" />
+    <button class="rotate">rotate</button>
+    <br />
     <input type="file" id="fileInput" />
     <canvas
       id="myCanvas"
@@ -23,6 +34,10 @@
     >
     </canvas>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.0.0/math.min.js"></script>
+    <script src="./logic/doTranslate.js"></script>
+    <script src="./logic/doRotate.js"></script>
+    <script src="./logic/doMirror.js"></script>
+    <script src="./logic/doScale.js"></script>
     <script src="./graphics/Line.js"></script>
     <script src="./graphics/Circle.js"></script>
     <script src="./graphics/Curve.js"></script>
