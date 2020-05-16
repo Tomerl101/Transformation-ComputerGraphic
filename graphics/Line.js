@@ -22,41 +22,54 @@ class Line {
     return { min, max };
   }
 
-  //TODO: duplicate code - refactor matrixs of points
+  scale(x, y, sx, sy) {
+    const pointsToScale = [this.p1, this.p2];
+    let result = doScale(pointsToScale, x, y, sx, sy);
+    //update points with new values
+    this.p1 = result[0];
+    this.p2 = result[1];
+  }
+
   mirror(axis = 'y') {
-    const axisX = axis === 'x' ? -1 : 1;
-    const axisY = axis === 'y' ? -1 : 1;
-    const p1matrix = math.matrix([this.p1.x, this.p1.y, 1]);
-    const p2matrix = math.matrix([this.p2.x, this.p2.y, 1]);
-    const mirrorMatrix = math.matrix([
-      [axisY, 0, 0],
-      [0, axisX, 0],
-      [0, 0, 1],
-    ]);
-
-    let result = math.multiply(p1matrix, mirrorMatrix);
-    this.p1.x = result._data[0];
-    this.p1.y = result._data[1];
-
-    result = math.multiply(p2matrix, mirrorMatrix);
-    this.p2.x = result._data[0];
-    this.p2.y = result._data[1];
+    const pointsToRotate = [this.p1, this.p2];
+    let result = doMirror(pointsToRotate, axis);
+    //update points with new values
+    this.p1 = result[0];
+    this.p2 = result[1];
   }
 
   translate(x = 0, y = 0) {
-    const p1matrix = math.matrix([this.p1.x, this.p1.y, 1]);
-    const p2matrix = math.matrix([this.p2.x, this.p2.y, 1]);
-    const translateMatrix = math.matrix([
+    const pointsToTranslate = [this.p1, this.p2];
+    let result = doTranslate(pointsToTranslate, x, y);
+    //update points with new values
+    this.p1 = result[0];
+    this.p2 = result[1];
+  }
+
+  rotate(cx, cy, angle) {
+    const pointsToRotate = [this.p1, this.p2];
+    let result = doRotate(pointsToRotate, cx, cy, angle);
+    //update points with new values
+    this.p1 = result[0];
+    this.p2 = result[1];
+  }
+
+  shear(x1 = 0, x2 = 0) {
+    const moveBy = (x2 - x1) / 100;
+    const shearMatrix = math.matrix([
       [1, 0, 0],
-      [0, 1, 0],
-      [x, y, 1],
+      [moveBy, 1, 0],
+      [0, 0, 1],
     ]);
 
-    let result = math.multiply(p1matrix, translateMatrix);
+    const p1matrix = math.matrix([this.p1.x, this.p1.y, 1]);
+    const p2matrix = math.matrix([this.p2.x, this.p2.y, 1]);
+
+    let result = math.multiply(p1matrix, shearMatrix);
     this.p1.x = result._data[0];
     this.p1.y = result._data[1];
 
-    result = math.multiply(p2matrix, translateMatrix);
+    result = math.multiply(p2matrix, shearMatrix);
     this.p2.x = result._data[0];
     this.p2.y = result._data[1];
   }
