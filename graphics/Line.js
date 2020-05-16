@@ -54,6 +54,13 @@ class Line {
     this.p2 = result[1];
   }
 
+  mapping(sx, sy, wxl, wyb, vxl, vyb) {
+    const pointsToMap = [this.p1, this.p2];
+    let result = doMapping(pointsToMap, sx, sy, wxl, wyb, vxl, vyb);
+    this.p1 = result[0];
+    this.p2 = result[1];
+  }
+
   shear(x1 = 0, x2 = 0) {
     const moveBy = (x2 - x1) / 100;
     const shearMatrix = math.matrix([

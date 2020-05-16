@@ -23,37 +23,37 @@ class Editor {
     this.mouseX = 0;
     this.mouseY = 0;
 
-    debugger;
     this.setGraphics(graphics);
     this.setMinMaxY();
     this.setMinMaxX();
     this.initButtonListeners();
     this.center = this.getCenter();
+    this.fitImageToViewport();
     this.drawGraphics();
 
-    // this.canvas.addEventListener('mousedown', (e) => {
-    //   this.mouseX = e.offsetX;
-    //   this.mouseY = e.offsetY;
-    //   this.isDrawing = true;
-    // });
+    this.canvas.addEventListener('mousedown', (e) => {
+      this.mouseX = e.offsetX;
+      this.mouseY = e.offsetY;
+      this.isDrawing = true;
+    });
 
-    // this.canvas.addEventListener('mousemove', (e) => {
-    //   if (this.isDrawing === true) {
-    //     this.shear(e.offsetX, this.canvas.height - e.offsetY);
+    this.canvas.addEventListener('mousemove', (e) => {
+      if (this.isDrawing === true) {
+        this.shear(e.offsetX, this.canvas.height - e.offsetY);
 
-    //     this.mouseX = e.offsetX;
-    //     this.mouseY = e.offsetY;
-    //   }
-    // });
+        this.mouseX = e.offsetX;
+        this.mouseY = e.offsetY;
+      }
+    });
 
-    // this.canvas.addEventListener('mouseup', (e) => {
-    //   if (this.isDrawing === true) {
-    //     // drawLine(context, x, y, e.offsetX, e.offsetY);
-    //     this.mouseX = 0;
-    //     this.mouseY = 0;
-    //     this.isDrawing = false;
-    //   }
-    // });
+    this.canvas.addEventListener('mouseup', (e) => {
+      if (this.isDrawing === true) {
+        // drawLine(context, x, y, e.offsetX, e.offsetY);
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.isDrawing = false;
+      }
+    });
   }
 
   setGraphics(graphics) {
@@ -188,7 +188,7 @@ class Editor {
 
   shear(x, y) {
     //do shear only if user clicked inside the boundries of the image
-    if (this.minY < y) {
+    if (this.minY < y && this.maxY > y) {
       debugger;
       this.translate(-this.minX, -this.minY);
       this.graphics.forEach((graphic) => graphic.shear(this.mouseX, x));
@@ -229,5 +229,28 @@ class Editor {
     this.setMinMaxY();
     this.setMinMaxX();
     this.center = this.getCenter();
+  }
+
+  /**
+   *TODO: add explanation
+   */
+  fitImageToViewport() {
+    let sx = (this.canvas.width - 0) / (this.maxX - this.minX);
+    let sy = (this.canvas.height - 0) / (this.maxY - this.minY);
+    this.graphics.forEach((graphic) => graphic.mapping(sx, sy, this.minX, this.minY, 0, 0));
+
+    this.minX = 0;
+    this.maxX = 700;
+    this.minY = 0;
+    this.maxY = 700;
+    this.center = this.getCenter();
+  }
+
+  isPointInsideBoundries(x, y) {
+    if (x < this.maxX && x > this.minX && y < this.maxY && y > this.minY) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

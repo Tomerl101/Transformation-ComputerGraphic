@@ -16,15 +16,7 @@ class Circle {
       ctx.beginPath();
       // ctx.ellipse(100, 100, 50, 75, 0, 0, 2 * Math.PI);
       debugger;
-      ctx.ellipse(
-        this.center.x,
-        this.center.y,
-        this.radiusX,
-        this.radiusY,
-        Math.PI * this.degree,
-        0,
-        Math.PI * 2
-      );
+      ctx.ellipse(this.center.x, this.center.y, this.radiusX, this.radiusY, Math.PI / 4, 0, Math.PI * 2);
       ctx.stroke();
     } else {
       // draw circle
@@ -76,9 +68,17 @@ class Circle {
     this.center = result[0];
   }
 
+  mapping(sx, sy, wxl, wyb, vxl, vyb) {
+    debugger;
+    const pointsToMap = [this.center];
+    let result = doMapping(pointsToMap, sx, sy, wxl, wyb, vxl, vyb);
+    this.center = result[0];
+    this.radius *= sx;
+  }
+
   shear(x1 = 0, x2 = 0) {
     debugger;
-    const moveBy = (x2 - x1) / 100;
+    const moveBy = (x2 - x1) * 1;
     const shearMatrix = math.matrix([
       [1, 0, 0],
       [moveBy, 1, 0],
@@ -110,8 +110,12 @@ class Circle {
     this.center.x = result._data[0];
     this.center.y = result._data[1];
 
-    this.radiusX = Number(math.distance([this.center.x, this.center.y], [this.top.x, this.top.y]).toFixed());
+    this.radiusX = Number(math.distance([this.center.x, this.center.y], [this.top.x, this.top.y]));
     this.radiusY = Number(math.distance([this.center.x, this.center.y], [this.right.x, this.right.y]));
+
+    var dy = this.top.y - this.right.y;
+    var dx = this.top.x - this.right.x;
+    this.rotation = Math.atan2(dy, dx);
 
     this.isEllipse = true;
     this.degree = moveBy;

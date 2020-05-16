@@ -73,5 +73,15 @@ class Curve {
     this.end = result[3];
   }
 
+  mapping(sx, sy, wxl, wyb, vxl, vyb) {
+    const pointsToMap = [this.start, this.control1, this.control2, this.end];
+    let result = doMapping(pointsToMap, sx, sy, wxl, wyb, vxl, vyb);
+    //update points with new values
+    this.start = result[0];
+    this.control1 = result[1];
+    this.control2 = result[2];
+    this.end = result[3];
+  }
+
   //shear
 }
