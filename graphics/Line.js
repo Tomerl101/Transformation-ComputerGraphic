@@ -62,22 +62,9 @@ class Line {
   }
 
   shear(x1 = 0, x2 = 0) {
-    const moveBy = (x2 - x1) / 100;
-    const shearMatrix = math.matrix([
-      [1, 0, 0],
-      [moveBy, 1, 0],
-      [0, 0, 1],
-    ]);
-
-    const p1matrix = math.matrix([this.p1.x, this.p1.y, 1]);
-    const p2matrix = math.matrix([this.p2.x, this.p2.y, 1]);
-
-    let result = math.multiply(p1matrix, shearMatrix);
-    this.p1.x = result._data[0];
-    this.p1.y = result._data[1];
-
-    result = math.multiply(p2matrix, shearMatrix);
-    this.p2.x = result._data[0];
-    this.p2.y = result._data[1];
+    const pointsToShear = [this.p1, this.p2];
+    let result = doShear(pointsToShear, x1, x2);
+    this.p1 = result[0];
+    this.p2 = result[1];
   }
 }

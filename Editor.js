@@ -24,6 +24,7 @@ class Editor {
     this.mouseY = 0;
 
     this.setGraphics(graphics);
+    debugger;
     this.setMinMaxY();
     this.setMinMaxX();
     this.initButtonListeners();
@@ -48,7 +49,6 @@ class Editor {
 
     this.canvas.addEventListener('mouseup', (e) => {
       if (this.isDrawing === true) {
-        // drawLine(context, x, y, e.offsetX, e.offsetY);
         this.mouseX = 0;
         this.mouseY = 0;
         this.isDrawing = false;
@@ -152,13 +152,11 @@ class Editor {
 
     this.graphics.forEach((graphic) => graphic.mirror(axis));
     this.translate(...translate);
-    this.clearCanvas();
     this.drawGraphics();
   }
 
   scale(scaleX, scaleY) {
     this.graphics.forEach((graphic) => graphic.scale(this.center.x, this.center.y, scaleX, scaleY));
-    this.clearCanvas();
     this.drawGraphics();
   }
 
@@ -169,7 +167,6 @@ class Editor {
    */
   translate(x, y) {
     this.graphics.forEach((graphic) => graphic.translate(x, y));
-    this.clearCanvas();
     this.drawGraphics();
   }
 
@@ -182,18 +179,16 @@ class Editor {
    */
   rotate(degree) {
     this.graphics.forEach((graphic) => graphic.rotate(this.center.x, this.center.y, degree));
-    this.clearCanvas();
     this.drawGraphics();
   }
 
   shear(x, y) {
     //do shear only if user clicked inside the boundries of the image
-    if (this.minY < y && this.maxY > y) {
+    if (this.minY < y) {
       debugger;
       this.translate(-this.minX, -this.minY);
       this.graphics.forEach((graphic) => graphic.shear(this.mouseX, x));
       this.translate(this.minX, this.minY);
-      this.clearCanvas();
       this.drawGraphics();
     }
   }
@@ -235,6 +230,7 @@ class Editor {
    *TODO: add explanation
    */
   fitImageToViewport() {
+    debugger;
     let sx = (this.canvas.width - 0) / (this.maxX - this.minX);
     let sy = (this.canvas.height - 0) / (this.maxY - this.minY);
     this.graphics.forEach((graphic) => graphic.mapping(sx, sy, this.minX, this.minY, 0, 0));
@@ -243,6 +239,10 @@ class Editor {
     this.maxX = 700;
     this.minY = 0;
     this.maxY = 700;
+    // this.center = this.getCenter();
+    debugger;
+    // this.setMinMaxY();
+    // this.setMinMaxX();
     this.center = this.getCenter();
   }
 

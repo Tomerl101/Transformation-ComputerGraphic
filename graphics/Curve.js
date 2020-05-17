@@ -65,7 +65,6 @@ class Curve {
   rotate(cx, cy, angle) {
     const pointsToRotate = [this.start, this.control1, this.control2, this.end];
     let result = doRotate(pointsToRotate, cx, cy, angle);
-
     //update points with new values
     this.start = result[0];
     this.control1 = result[1];
@@ -83,5 +82,13 @@ class Curve {
     this.end = result[3];
   }
 
-  //shear
+  shear(x1 = 0, x2 = 0) {
+    const pointsToShear = [this.start, this.control1, this.control2, this.end];
+    let result = doShear(pointsToShear, x1, x2);
+    //update points with new values
+    this.start = result[0];
+    this.control1 = result[1];
+    this.control2 = result[2];
+    this.end = result[3];
+  }
 }
