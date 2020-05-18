@@ -1,7 +1,4 @@
-const canvas = document.getElementById('myCanvas');
-const ctx = canvas.getContext('2d');
-ctx.transform(1, 0, 0, -1, 0, canvas.height);
-
+let editor = null;
 //read file from user selected file
 document.getElementById('fileInput').addEventListener('change', function selectedFileChanged() {
   if (this.files.length === 0) {
@@ -24,9 +21,13 @@ document.getElementById('fileInput').addEventListener('change', function selecte
  * * @param {string} textData - the content of the user selected graphic file to draw
  */
 function loadGraphicsFile(textData) {
-  const textLines = textData.split('\n');
+  const canvas = document.getElementById('myCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.transform(1, 0, 0, -1, 0, canvas.height);
+  editor = null;
+  const textLines = textData.trim().split('\n');
   const graphics = textLines.map((line) => parseLine(line));
-  const editor = new Editor(canvas, graphics);
+  editor = new Editor(canvas, graphics);
 }
 
 /**

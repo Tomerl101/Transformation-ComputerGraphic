@@ -3,36 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>Draw Points</title>
   </head>
   <body>
-    <label for="scaleX">scaleX by:</label>
-    <input id="scaleX" type="number" min="1" />
-    <label for="scaleY">scaleY by:</label>
-    <input id="scaleY" type="number" min="1" />
-    <button id="doScale">scale</button>
-    <br />
-    <button id="mirrorX">mirrorX</button>
-    <button id="mirrorY">mirrorY</button>
-    <br />
-    <label for="translateX">translateX by:</label>
-    <input id="translateX" type="number" />
-    <label for="translateY">translateY by:</label>
-    <input id="translateY" type="number" />
-    <button id="doTranslate">translate</button>
-    <br />
-    <label for="rotationDegree">rotation degree:</label>
-    <input id="rotationDegree" type="number" />
-    <button class="rotate">rotate</button>
-    <br />
-    <input type="file" id="fileInput" />
     <canvas
       id="myCanvas"
       width="700"
       height="700"
-      style="border: 1px solid #000000; display: block; margin-top: 10px;"
+      style="border: 1px solid #000000; display: block; margin-right: 20px;"
     >
     </canvas>
+    <div>
+      <input type="file" id="fileInput" />
+      <br />
+      <br />
+      <button type="button" id="doScaleOut" class="btn btn-info">
+        <img src="https://img.icons8.com/ios/50/ffffff/zoom-out.png" />
+      </button>
+      <button type="button" id="doScaleIn" class="btn btn-info">
+        <img src="https://img.icons8.com/ios/50/ffffff/zoom-in.png" />
+      </button>
+      <br />
+      <br />
+      <button id="mirrorX" type="button" class="btn btn-success">
+        <img src="https://img.icons8.com/ios/50/ffffff/flip-horizontal.png" />
+      </button>
+      <button id="mirrorY" type="button" class="btn btn-success">
+        <img src="https://img.icons8.com/ios/50/ffffff/flip-vertical.png" />
+      </button>
+      <br />
+      <br />
+      <button type="button" class="btn btn-danger rotateLeft">
+        <img src="https://img.icons8.com/ios/50/ffffff/rotate-left.png" />
+      </button>
+      <button type="button" class="btn btn-danger rotateRight">
+        <img src="https://img.icons8.com/ios/50/ffffff/rotate-right.png" />
+      </button>
+      <br />
+      <br />
+      <button id="doTranslate" type="button" class="btn btn-warning">
+        <img src="https://img.icons8.com/ios/50/ffffff/resize-four-directions.png" />
+      </button>
+      <button id="doShearing" type="button" class="btn btn-warning">
+        <img src="./shear.png" width="50" height="50" id="shearIcon" />
+      </button>
+      <br />
+      <br />
+      <button id="clearCanvas" type="button" class="btn btn-secondary">
+        <img src="https://img.icons8.com/ios/50/ffffff/clear-formatting.png" />
+      </button>
+      <p id="error"></p>
+      <br />
+      <br />
+    </div>
+    <a href="https://icons8.com/icon/15020/flip-horizontal">Flip Horizontal icon by Icons8</a>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.0.0/math.min.js"></script>
     <script src="./logic/doTranslate.js"></script>
     <script src="./logic/doMapping.js"></script>

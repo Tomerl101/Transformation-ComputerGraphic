@@ -10,7 +10,7 @@ class Editor {
     console.log('initialize Editor...');
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.isDrawing = false;
+    this.isMouseDown = false;
     this.graphics = null;
     this.minY = null;
     this.maxY = null;
@@ -20,38 +20,45 @@ class Editor {
     this.anchorX = null;
     this.anchorY = null;
 
+    this.isTranslateBtnSelected = false;
+    this.isShearingBtnSelected = false;
+
     this.mouseX = 0;
     this.mouseY = 0;
 
     this.setGraphics(graphics);
-    debugger;
     this.setMinMaxY();
     this.setMinMaxX();
-    this.initButtonListeners();
     this.center = this.getCenter();
+    this.initButtonListeners();
     this.fitImageToViewport();
     this.drawGraphics();
 
+    //TODO: move into mouseDrag() function
     this.canvas.addEventListener('mousedown', (e) => {
       this.mouseX = e.offsetX;
       this.mouseY = e.offsetY;
-      this.isDrawing = true;
+      this.isMouseDown = true;
     });
 
     this.canvas.addEventListener('mousemove', (e) => {
-      if (this.isDrawing === true) {
-        this.shear(e.offsetX, this.canvas.height - e.offsetY);
-
-        this.mouseX = e.offsetX;
-        this.mouseY = e.offsetY;
+      if (this.isMouseDown) {
+        if (this.isTranslateBtnSelected) {
+          this.onMouseMoveTranslate(e);
+          return;
+        }
+        if (this.isShearingBtnSelected) {
+          this.onMouseMoveShear(e);
+          return;
+        }
       }
     });
 
     this.canvas.addEventListener('mouseup', (e) => {
-      if (this.isDrawing === true) {
+      if (this.isMouseDown === true) {
         this.mouseX = 0;
         this.mouseY = 0;
-        this.isDrawing = false;
+        this.isMouseDown = false;
       }
     });
   }
@@ -61,13 +68,25 @@ class Editor {
   }
 
   initButtonListeners() {
-    globalThis.document.querySelector('#doScale').addEventListener('click', this.onClickScale.bind(this));
+    globalThis.document.querySelector('#doScaleIn').addEventListener('click', this.onClickScaleIn.bind(this));
+    globalThis.document
+      .querySelector('#doScaleOut')
+      .addEventListener('click', this.onClickScaleOut.bind(this));
     globalThis.document.querySelector('#mirrorX').addEventListener('click', () => this.mirror('x'));
     globalThis.document.querySelector('#mirrorY').addEventListener('click', () => this.mirror('y'));
-    globalThis.document.querySelector('.rotate').addEventListener('click', () => this.onClickRotate());
+    globalThis.document
+      .querySelector('.rotateRight')
+      .addEventListener('click', () => this.onClickRotateRight());
+    globalThis.document
+      .querySelector('.rotateLeft')
+      .addEventListener('click', () => this.onClickRotateLeft());
     globalThis.document
       .querySelector('#doTranslate')
-      .addEventListener('click', this.onClickTranslate.bind(this));
+      .addEventListener('click', this.toggleTranslate.bind(this));
+    globalThis.document
+      .querySelector('#doShearing')
+      .addEventListener('click', this.toggleShearing.bind(this));
+    globalThis.document.querySelector('#clearCanvas').addEventListener('click', this.onClickClear.bind(this));
   }
 
   drawGraphics() {
@@ -185,7 +204,6 @@ class Editor {
   shear(x, y) {
     //do shear only if user clicked inside the boundries of the image
     if (this.minY < y) {
-      debugger;
       this.translate(-this.minX, -this.minY);
       this.graphics.forEach((graphic) => graphic.shear(this.mouseX, x));
       this.translate(this.minX, this.minY);
@@ -193,56 +211,18 @@ class Editor {
     }
   }
 
-  onClickTranslate() {
-    debugger;
-    //get values from the translate inputs
-    const x = Number(globalThis.document.querySelector('#translateX').value) || 0;
-    const y = Number(globalThis.document.querySelector('#translateY').value) || 0;
-    this.translate(x, y);
-    //recalculate the new minmax bounderies of the image after translate
-    this.setMinMaxY();
-    this.setMinMaxX();
-    this.center = this.getCenter();
-  }
-
-  onClickRotate() {
-    //get values from the translate inputs
-    const degree = -Number(globalThis.document.querySelector('#rotationDegree').value) || 0;
-    this.rotate(degree);
-  }
-
-  onClickScale() {
-    //get values from the translate inputs
-    const scaleX = Number(globalThis.document.querySelector('#scaleX').value) || 0;
-    const scaleY = Number(globalThis.document.querySelector('#scaleY').value) || 0;
-
-    //cannot scale by negative number
-    if (scaleX <= 0 || scaleY <= 0) return;
-
-    this.scale(scaleX, scaleY);
-    //recalculate the new minmax bounderies of the image after translate
-    this.setMinMaxY();
-    this.setMinMaxX();
-    this.center = this.getCenter();
-  }
-
   /**
    *TODO: add explanation
    */
   fitImageToViewport() {
-    debugger;
     let sx = (this.canvas.width - 0) / (this.maxX - this.minX);
     let sy = (this.canvas.height - 0) / (this.maxY - this.minY);
     this.graphics.forEach((graphic) => graphic.mapping(sx, sy, this.minX, this.minY, 0, 0));
 
     this.minX = 0;
-    this.maxX = 700;
+    this.maxX = this.canvas.width;
     this.minY = 0;
-    this.maxY = 700;
-    // this.center = this.getCenter();
-    debugger;
-    // this.setMinMaxY();
-    // this.setMinMaxX();
+    this.maxY = this.canvas.height;
     this.center = this.getCenter();
   }
 
@@ -252,5 +232,75 @@ class Editor {
     } else {
       return false;
     }
+  }
+
+  //-------- VIEW ------------
+  onClickClear() {
+    this.clearCanvas();
+    this.graphics = [];
+  }
+
+  setErrorText(text) {
+    globalThis.document.querySelector('#error').innerText(text);
+  }
+
+  toggleTranslate() {
+    this.isTranslateBtnSelected = !this.isTranslateBtnSelected;
+    globalThis.document.querySelector('#doTranslate').classList.toggle('active');
+    globalThis.document.querySelector('#doShearing').classList.remove('active');
+    this.isShearingBtnSelected = false;
+  }
+
+  toggleShearing() {
+    this.isShearingBtnSelected = !this.isShearingBtnSelected;
+    globalThis.document.querySelector('#doShearing').classList.toggle('active');
+    globalThis.document.querySelector('#doTranslate').classList.remove('active');
+    this.isTranslateBtnSelected = false;
+  }
+
+  onClickScaleOut() {
+    const scaleX = 0.9;
+    const scaleY = 0.9;
+    this.scale(scaleX, scaleY);
+    //recalculate the new minmax bounderies of the image after translate
+    this.setMinMaxY();
+    this.setMinMaxX();
+    this.center = this.getCenter();
+  }
+
+  onClickScaleIn() {
+    const scaleX = 1.1;
+    const scaleY = 1.1;
+    this.scale(scaleX, scaleY);
+    //recalculate the new minmax bounderies of the image after translate
+    this.setMinMaxY();
+    this.setMinMaxX();
+    this.center = this.getCenter();
+  }
+
+  onClickRotateRight() {
+    const degree = -15;
+    this.rotate(degree);
+  }
+
+  onClickRotateLeft() {
+    const degree = 15;
+    this.rotate(degree);
+  }
+
+  onMouseMoveTranslate(e) {
+    const x = e.offsetX - this.center.x;
+    const y = 700 - e.offsetY - this.center.y;
+    this.translate(x, y);
+    //recalculate the new minmax bounderies of the image after translate
+    this.setMinMaxY();
+    this.setMinMaxX();
+    this.center = this.getCenter();
+  }
+
+  onMouseMoveShear(e) {
+    this.shear(e.offsetX, this.canvas.height - e.offsetY);
+    this.mouseX = e.offsetX;
+    this.mouseY = e.offsetY;
   }
 }
