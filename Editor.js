@@ -26,13 +26,20 @@ class Editor {
     this.mouseX = 0;
     this.mouseY = 0;
 
-    this.setGraphics(graphics);
-    this.setMinMaxY();
-    this.setMinMaxX();
-    this.center = this.getCenter();
-    this.initButtonListeners();
-    this.fitImageToViewport();
-    this.drawGraphics();
+    try {
+      debugger;
+      this.setGraphics(graphics);
+      this.setMinMaxY();
+      this.setMinMaxX();
+      this.center = this.getCenter();
+      this.initButtonListeners();
+      this.fitImageToViewport();
+      this.drawGraphics();
+      this.setErrorText('');
+    } catch (error) {
+      this.setErrorText(error.message);
+      return;
+    }
 
     //TODO: move into mouseDrag() function
     this.canvas.addEventListener('mousedown', (e) => {
@@ -147,16 +154,21 @@ class Editor {
    * @returns Line | Circle | Curve
    */
   GraphicFactory(graphic) {
-    //TODO: refactor to factory patten
     if (graphic.shape === SHAPE_TYPE.LINE) {
+      if (graphic.values.length != 4) throw Error('invalid line values...');
       return new Line(...graphic.values);
     }
     if (graphic.shape === SHAPE_TYPE.CIRCLE) {
+      debugger;
+      if (graphic.values.length != 3 || Number(graphic.values[graphic.values.length - 1]) <= 0)
+        throw Error('invalid circle values...');
       return new Circle(...graphic.values);
     }
     if (graphic.shape === SHAPE_TYPE.CURVE) {
+      if (graphic.values.length != 8) throw Error('invalid curve values...');
       return new Curve(...graphic.values);
     }
+    throw Error('cannot create graphic, check input file...');
   }
 
   /**
@@ -241,7 +253,7 @@ class Editor {
   }
 
   setErrorText(text) {
-    globalThis.document.querySelector('#error').innerText(text);
+    globalThis.document.querySelector('#error').innerText = text;
   }
 
   toggleTranslate() {
@@ -289,13 +301,15 @@ class Editor {
   }
 
   onMouseMoveTranslate(e) {
-    const x = e.offsetX - this.center.x;
-    const y = 700 - e.offsetY - this.center.y;
+    const x = -(this.mouseX - e.offsetX);
+    const y = 700 - e.offsetY - (700 - this.mouseY);
     this.translate(x, y);
     //recalculate the new minmax bounderies of the image after translate
     this.setMinMaxY();
     this.setMinMaxX();
     this.center = this.getCenter();
+    this.mouseX = e.offsetX;
+    this.mouseY = e.offsetY;
   }
 
   onMouseMoveShear(e) {
