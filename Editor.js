@@ -27,7 +27,6 @@ class Editor {
     this.mouseY = 0;
 
     try {
-      debugger;
       this.setGraphics(graphics);
       this.setMinMaxY();
       this.setMinMaxX();
@@ -159,7 +158,6 @@ class Editor {
       return new Line(...graphic.values);
     }
     if (graphic.shape === SHAPE_TYPE.CIRCLE) {
-      debugger;
       if (graphic.values.length != 3 || Number(graphic.values[graphic.values.length - 1]) <= 0)
         throw Error('invalid circle values...');
       return new Circle(...graphic.values);
