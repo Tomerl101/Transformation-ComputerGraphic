@@ -222,18 +222,21 @@ class Editor {
   }
 
   /**
-   *TODO: add explanation
+   * fit any image size to be 70% of the canvas window
+   * and position the user image to the center of the canvas
    */
   fitImageToViewport() {
-    let sx = (this.canvas.width - 0) / (this.maxX - this.minX);
-    let sy = (this.canvas.height - 0) / (this.maxY - this.minY);
+    const scale = 0.7;
+    let sx = ((this.canvas.width - 0) / (this.maxX - this.minX)) * scale;
+    let sy = ((this.canvas.height - 0) / (this.maxY - this.minY)) * scale;
     this.graphics.forEach((graphic) => graphic.mapping(sx, sy, this.minX, this.minY, 0, 0));
 
-    this.minX = 0;
-    this.maxX = this.canvas.width;
-    this.minY = 0;
-    this.maxY = this.canvas.height;
+    this.setMinMaxY();
+    this.setMinMaxX();
     this.center = this.getCenter();
+    this.graphics.forEach((graphic) =>
+      graphic.translate(this.canvas.width / 2 - this.center.x, this.canvas.height / 2 - this.center.y)
+    );
   }
 
   isPointInsideBoundries(x, y) {
